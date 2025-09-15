@@ -4,7 +4,7 @@
 [![C++](https://img.shields.io/badge/C++-17-green?style=for-the-badge&logo=cplusplus&logoColor=white)](https://isocpp.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellow?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
 [![Gazebo](https://img.shields.io/badge/Gazebo-Classic-orange?style=for-the-badge&logo=gazebo)](https://gazebosim.org/)
-[![Nav2](https://img.shields.io/badge/Nav2-Powered-purple?style=for-the-badge)](https://navigation.ros.org/)
+[![Nav2](https://img.shields.io/badge/Nav2-Powered-purple?style=for-the-badge)](https://docs.nav2.org/)
 
 ## 🎯 Overview
 
@@ -300,4 +300,5 @@ This project demonstrates:
 - [SLAM Toolbox Guide](https://github.com/SteveMacenski/slam_toolbox)
 - [TurtleBot3 Manual](https://emanual.robotis.com/docs/en/platform/turtlebot3/)
 - [ROS2 Humble Docs](https://docs.ros.org/en/humble/)
+
 
