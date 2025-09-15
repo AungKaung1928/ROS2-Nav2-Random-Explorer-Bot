@@ -1,0 +1,8 @@
+exploration_controller:
+  ros__parameters:
+    exploration_bounds:
+      min_x: -5.0  # Even larger area
+      max_x: 5.0
+      min_y: -5.0
+      max_y: 5.0
+    exploration_frequency: 0.5
