@@ -294,25 +294,6 @@ This project demonstrates:
 - **Modern C++**: Smart pointers, lambdas, optional types
 - **ROS2 Best Practices**: Lifecycle nodes, parameters, logging
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- Nav2 team for the powerful navigation stack
-- SLAM Toolbox developers for mapping capabilities
-- TurtleBot3 team for simulation models
-- ROS2 community for excellent documentation
-
 ## 📚 Resources
 
 - [Nav2 Documentation](https://navigation.ros.org/)
@@ -320,5 +301,3 @@ This project is licensed under the Apache License 2.0 - see the LICENSE file for
 - [TurtleBot3 Manual](https://emanual.robotis.com/docs/en/platform/turtlebot3/)
 - [ROS2 Humble Docs](https://docs.ros.org/en/humble/)
 
----
-*Built with ❤️ for the ROS2 community*
