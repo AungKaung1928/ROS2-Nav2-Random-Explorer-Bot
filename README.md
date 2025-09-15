@@ -297,9 +297,10 @@ This project demonstrates:
 ## 📚 Resources
 
 - [Nav2 Documentation](https://docs.nav2.org/)
-- [SLAM Toolbox Guide](https://github.com/SteveMacenski/slam_toolbox)
+- [SLAM Toolbox](https://github.com/stevemacenski/slam_toolbox)
 - [TurtleBot3 Manual](https://emanual.robotis.com/docs/en/platform/turtlebot3/)
 - [ROS2 Humble Docs](https://docs.ros.org/en/humble/)
+
 
 
 
