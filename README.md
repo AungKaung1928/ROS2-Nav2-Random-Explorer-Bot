@@ -129,7 +129,7 @@ ros2 launch random_explorer_bot explorer_nav.launch.py
 ```
 random_explorer_bot/
 ├── 📁 config/
-│   ├── nav2_params.yaml              # Nav2 configuration
+│   ├── nav2_params.yaml              # Navigation2 configuration
 │   ├── exploration_params.yaml       # Exploration boundaries
 │   └── rviz_config.rviz             # Visualization settings
 │
@@ -146,7 +146,7 @@ random_explorer_bot/
 │   └── main.cpp                      # Node entry point
 │
 ├── CMakeLists.txt                    # Build configuration
-├── package.xml                       # Package manifest
+├── package.xml                       # Package
 └── README.md                         # Documentation
 ```
 
@@ -300,6 +300,7 @@ This project demonstrates:
 - [SLAM Toolbox](https://github.com/stevemacenski/slam_toolbox)
 - [TurtleBot3 Manual](https://emanual.robotis.com/docs/en/platform/turtlebot3/)
 - [ROS2 Humble Docs](https://docs.ros.org/en/humble/)
+
 
 
 
