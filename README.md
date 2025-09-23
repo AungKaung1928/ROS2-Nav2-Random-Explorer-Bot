@@ -8,7 +8,7 @@
 
 ## 🎯 Overview
 
-An autonomous exploration system built with ROS2 and Nav2 that enables robots to continuously explore unknown environments. The system generates random navigation goals within specified boundaries, demonstrating Nav2's powerful navigation capabilities through dynamic path planning and real-time obstacle avoidance using SLAM.
+An Autonomous Exploration System built with ROS2 and Nav2 that enables robots to continuously explore unknown environments. The system generates random navigation goals within specified boundaries, demonstrating Nav2's powerful navigation capabilities through dynamic path planning and real-time obstacle avoidance using SLAM.
 
 ### ✨ Key Features
 
@@ -300,6 +300,7 @@ This project demonstrates:
 - [SLAM Toolbox](https://github.com/stevemacenski/slam_toolbox)
 - [TurtleBot3 Manual](https://emanual.robotis.com/docs/en/platform/turtlebot3/)
 - [ROS2 Humble Docs](https://docs.ros.org/en/humble/)
+
 
 
 
