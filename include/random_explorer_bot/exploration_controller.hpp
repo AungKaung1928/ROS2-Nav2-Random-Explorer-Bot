@@ -29,7 +29,7 @@ private:
     rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr map_sub_;
     rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr amcl_sub_;
     
-    // Publishers
+    // Publisher
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr goal_marker_pub_;
     
     // Timer for exploration loop
