@@ -1,4 +1,4 @@
-# Random Explorer Bot - Autonomous Navigation with Nav2 🤖
+# Random Explorer Bot Project - Autonomous Navigation with Nav2 🤖
 
 [![ROS2](https://img.shields.io/badge/ROS2-Humble-blue?style=for-the-badge&logo=ros&logoColor=white)](https://docs.ros.org/en/humble/)
 [![C++](https://img.shields.io/badge/C++-17-green?style=for-the-badge&logo=cplusplus&logoColor=white)](https://isocpp.org/)
@@ -300,6 +300,7 @@ This project demonstrates:
 - [SLAM Toolbox](https://github.com/stevemacenski/slam_toolbox)
 - [TurtleBot3 Manual](https://emanual.robotis.com/docs/en/platform/turtlebot3/)
 - [ROS2 Humble Docs](https://docs.ros.org/en/humble/)
+
 
 
 
