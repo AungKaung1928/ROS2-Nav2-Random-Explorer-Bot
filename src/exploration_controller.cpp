@@ -83,7 +83,7 @@ void ExplorationController::explorationLoop() {
         return;
     }
     
-    // Wait for Nav2 to be ready
+    // Wait for Nav2 stack to be ready
     if (!nav_client_->wait_for_action_server(std::chrono::seconds(1))) {
         RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
                              "Nav2 action server not available");
