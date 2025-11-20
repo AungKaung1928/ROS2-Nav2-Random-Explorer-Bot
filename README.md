@@ -1,4 +1,4 @@
-# Random Explorer Bot Project - Autonomous Navigation with Nav2 🤖
+# Random Explorer Bot Project - Autonomous Navigation with Nav2
 
 [![ROS2](https://img.shields.io/badge/ROS2-Humble-blue?style=for-the-badge&logo=ros&logoColor=white)](https://docs.ros.org/en/humble/)
 [![C++](https://img.shields.io/badge/C++-17-green?style=for-the-badge&logo=cplusplus&logoColor=white)](https://isocpp.org/)
@@ -6,21 +6,21 @@
 [![Gazebo](https://img.shields.io/badge/Gazebo-Classic-orange?style=for-the-badge&logo=gazebo)](https://gazebosim.org/)
 [![Nav2](https://img.shields.io/badge/Nav2-Navigation-violet?style=for-the-badge)](https://docs.nav2.org/)
 
-## 🎯 Overview
+## Overview
 
 An Autonomous Exploration System built with ROS2 and Nav2 that enables robots to continuously explore unknown environments. The system generates random navigation goals within specified boundaries, demonstrating Nav2's powerful navigation capabilities through dynamic path planning and real-time obstacle avoidance using SLAM.
 
-### ✨ Key Features
+### Key Features
 
-- **🗺️ Dynamic Mapping**: Real-time map generation using SLAM Toolbox
-- **🎲 Random Goal Generation**: Smart goal selection with map validation
-- **🚀 Continuous Exploration**: Autonomous navigation without human intervention
-- **🛡️ Intelligent Obstacle Avoidance**: Dynamic collision prevention using Nav2
-- **📊 Visual Feedback**: Colorful goal markers and progress tracking in RViz
-- **⚡ High Performance**: Optimized for continuous operation
-- **🔧 Configurable Boundaries**: YAML-based exploration area configuration
+- **Dynamic Mapping**: Real-time map generation using SLAM Toolbox
+- **Random Goal Generation**: Smart goal selection with map validation
+- **Continuous Exploration**: Autonomous navigation without human intervention
+- **Intelligent Obstacle Avoidance**: Dynamic collision prevention using Nav2
+- **Visual Feedback**: Colorful goal markers and progress tracking in RViz
+- **High Performance**: Optimized for continuous operation
+- **Configurable Boundaries**: YAML-based exploration area configuration
 
-## 🏗️ System Architecture
+## System Architecture
 
 ```mermaid
 graph TD
@@ -46,9 +46,10 @@ graph TD
 | **Nav2 Stack** | Navigation execution | Path planning, obstacle avoidance |
 | **SLAM Toolbox** | Mapping | Real-time environment mapping |
 
-## 📋 Prerequisites
+## Prerequisites
 
 ### System Requirements
+
 - **OS**: Ubuntu 22.04 LTS
 - **ROS2**: Humble Hawksbill
 - **RAM**: 4GB minimum (8GB recommended)
@@ -77,7 +78,7 @@ sudo apt install -y \
   cmake
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
@@ -124,24 +125,24 @@ export TURTLEBOT3_MODEL=burger
 ros2 launch random_explorer_bot explorer_nav.launch.py
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 random_explorer_bot/
-├── 📁 config/
+├── config/
 │   ├── nav2_params.yaml              # Navigation2 configuration
 │   ├── exploration_params.yaml       # Exploration boundaries
 │   └── rviz_config.rviz             # Visualization settings
 │
-├── 📁 include/random_explorer_bot/
+├── include/random_explorer_bot/
 │   ├── random_goal_generator.hpp     # Goal generation logic
 │   ├── exploration_controller.hpp    # Main controller
 │   └── map_validator.hpp            # Map validation utilities
 │
-├── 📁 launch/
+├── launch/
 │   └── explorer_nav.launch.py        # Main launch file
 │
-├── 📁 src/
+├── src/
 │   ├── exploration_controller.cpp    # Controller implementation
 │   └── main.cpp                      # Node entry point
 │
@@ -150,7 +151,7 @@ random_explorer_bot/
 └── README.md                         # Documentation
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 ### Exploration Boundaries
 
@@ -185,7 +186,7 @@ controller_server:
     yaw_goal_tolerance: 0.25
 ```
 
-## 🎮 Usage
+## Usage
 
 ### Monitor Exploration
 
@@ -213,9 +214,10 @@ ros2 param set /exploration_controller exploration_frequency 1.0
 ros2 param list /exploration_controller
 ```
 
-## 📊 System Behavior
+## System Behavior
 
 The robot will:
+
 1. **Initialize**: Wait for map and Nav2 to be ready
 2. **Generate Goal**: Create random valid goal within boundaries
 3. **Navigate**: Move to goal while avoiding obstacles
@@ -223,12 +225,13 @@ The robot will:
 5. **Repeat**: Continue exploring indefinitely
 
 ### Visual Indicators in RViz
+
 - **Colored Arrows**: Each goal has a unique color
 - **Text Labels**: Goal numbers displayed above arrows
 - **Path Lines**: Green (global) and red (local) paths
 - **Costmaps**: Obstacle representation
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
@@ -250,7 +253,7 @@ ros2 action list | grep navigate_to_pose
 ros2 run random_explorer_bot exploration_controller --ros-args --log-level debug
 ```
 
-## 🔧 Advanced Configuration
+## Advanced Configuration
 
 ### For Larger Exploration Areas
 
@@ -274,7 +277,7 @@ max_vel_x: 0.5
 acc_lim_x: 3.0
 ```
 
-## 📈 Performance Metrics
+## Performance Metrics
 
 | Metric | Value |
 |--------|-------|
@@ -285,27 +288,19 @@ acc_lim_x: 3.0
 | **CPU Usage** | <30% |
 | **Memory Usage** | <500MB |
 
-## 🎓 Learning Outcomes
+## Learning Outcomes
 
 This project demonstrates:
+
 - **Nav2 Stack Integration**: Complete navigation pipeline
 - **Action Clients**: Asynchronous goal handling
 - **SLAM Integration**: Real-time mapping
 - **Modern C++**: Smart pointers, lambdas, optional types
 - **ROS2 Best Practices**: Lifecycle nodes, parameters, logging
 
-## 📚 Resources
+## Resources
 
 - [Nav2 Documentation](https://docs.nav2.org/)
 - [SLAM Toolbox](https://github.com/stevemacenski/slam_toolbox)
 - [TurtleBot3 Manual](https://emanual.robotis.com/docs/en/platform/turtlebot3/)
 - [ROS2 Humble Docs](https://docs.ros.org/en/humble/)
-
-
-
-
-
-
-
-
-
