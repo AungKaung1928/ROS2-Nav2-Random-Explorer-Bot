@@ -229,7 +229,7 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /local_plan
       Value: true
-    - Class: rviz_default_plugins/MarkerArray
+    - Class: rviz_default_plugins/Marker
       Enabled: true
       Name: ExplorationGoal
       Namespaces:
@@ -287,7 +287,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 10
+      Distance: 15
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1

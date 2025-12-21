@@ -1,9 +1,8 @@
 #ifndef MAP_VALIDATOR_HPP
 #define MAP_VALIDATOR_HPP
 
-#include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
-#include <geometry_msgs/msg/point.hpp>
+#include <cmath>
 #include <memory>
 
 namespace random_explorer {
@@ -12,46 +11,85 @@ class MapValidator {
 public:
     MapValidator() = default;
     
-    // Update the internal map representation
     void updateMap(const nav_msgs::msg::OccupancyGrid::SharedPtr map) {
         map_ = map;
     }
     
-    // Check if a point is valid (not in obstacle or unknown space)
-    bool isValidPoint(double x, double y, double clearance = 0.2) const {
+    // Check if a point is valid for navigation
+    // allow_unknown: if true, unknown space (-1) is considered valid (for frontier exploration)
+    bool isValidPoint(double x, double y, double clearance = 0.3, bool allow_unknown = false) const {
         if (!map_) return false;
         
-        // Convert world coordinates to map coordinates
-        int mx = static_cast<int>((x - map_->info.origin.position.x) / map_->info.resolution);
-        int my = static_cast<int>((y - map_->info.origin.position.y) / map_->info.resolution);
+        const auto& info = map_->info;
         
-        // Check bounds
-        if (mx < 0 || mx >= static_cast<int>(map_->info.width) ||
-            my < 0 || my >= static_cast<int>(map_->info.height)) {
+        // Convert world coordinates to map coordinates
+        int mx = static_cast<int>((x - info.origin.position.x) / info.resolution);
+        int my = static_cast<int>((y - info.origin.position.y) / info.resolution);
+        
+        // Check if center point is within map bounds
+        if (mx < 0 || mx >= static_cast<int>(info.width) ||
+            my < 0 || my >= static_cast<int>(info.height)) {
             return false;
         }
         
-        // Check clearance around the point
-        int clearance_cells = static_cast<int>(clearance / map_->info.resolution);
-        for (int dx = -clearance_cells; dx <= clearance_cells; ++dx) {
-            for (int dy = -clearance_cells; dy <= clearance_cells; ++dy) {
+        // Check center cell first
+        int center_idx = my * info.width + mx;
+        int8_t center_val = map_->data[center_idx];
+        
+        // Center must be free (0-50) or unknown if allowed
+        if (center_val > 50) return false;  // Occupied
+        if (center_val < 0 && !allow_unknown) return false;  // Unknown
+        
+        // Circular clearance check
+        int clearance_cells = static_cast<int>(std::ceil(clearance / info.resolution));
+        double clearance_sq = clearance * clearance;
+        
+        for (int dy = -clearance_cells; dy <= clearance_cells; ++dy) {
+            for (int dx = -clearance_cells; dx <= clearance_cells; ++dx) {
+                // Circular check
+                double dist_sq = (dx * info.resolution) * (dx * info.resolution) + 
+                                 (dy * info.resolution) * (dy * info.resolution);
+                if (dist_sq > clearance_sq) continue;
+                
                 int check_x = mx + dx;
                 int check_y = my + dy;
                 
-                if (check_x >= 0 && check_x < static_cast<int>(map_->info.width) &&
-                    check_y >= 0 && check_y < static_cast<int>(map_->info.height)) {
-                    int index = check_y * map_->info.width + check_x;
-                    // Occupied (>50) or unknown (-1) cells are invalid
-                    if (map_->data[index] > 50 || map_->data[index] < 0) {
-                        return false;
-                    }
+                // Skip out-of-bounds cells
+                if (check_x < 0 || check_x >= static_cast<int>(info.width) ||
+                    check_y < 0 || check_y >= static_cast<int>(info.height)) {
+                    continue;
                 }
+                
+                int index = check_y * info.width + check_x;
+                int8_t cell_val = map_->data[index];
+                
+                // Reject if occupied
+                if (cell_val > 50) return false;
+                
+                // Reject unknown only if not allowed
+                if (cell_val < 0 && !allow_unknown) return false;
             }
         }
         return true;
     }
     
+    // Get map dimensions in world coordinates
+    bool getMapBounds(double& min_x, double& max_x, double& min_y, double& max_y) const {
+        if (!map_) return false;
+        
+        const auto& info = map_->info;
+        min_x = info.origin.position.x;
+        min_y = info.origin.position.y;
+        max_x = min_x + info.width * info.resolution;
+        max_y = min_y + info.height * info.resolution;
+        return true;
+    }
+    
     bool hasMap() const { return map_ != nullptr; }
+    
+    double getResolution() const { 
+        return map_ ? map_->info.resolution : 0.05; 
+    }
 
 private:
     nav_msgs::msg::OccupancyGrid::SharedPtr map_;

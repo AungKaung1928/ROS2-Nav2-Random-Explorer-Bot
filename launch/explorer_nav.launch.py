@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -53,7 +52,7 @@ def generate_launch_description():
         output='screen'
     )
     
-    # Launch Nav2 (without map_server since we're using SLAM)
+    # Launch Nav2
     nav2_bringup_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(nav2_dir, 'launch', 'navigation_launch.py')
@@ -77,20 +76,27 @@ def generate_launch_description():
         output='screen'
     )
     
-    # Launch exploration controller with delay to ensure everything is ready
-    exploration_controller_cmd = Node(
-        package='random_explorer_bot',
-        executable='exploration_controller',
-        name='exploration_controller',
-        parameters=[exploration_params_file,
-                    {'use_sim_time': use_sim_time}],
-        output='screen'
+    # Launch exploration controller with delay to ensure Nav2 is ready
+    exploration_controller_cmd = TimerAction(
+        period=10.0,  # Wait 10 seconds for Nav2 to initialize
+        actions=[
+            Node(
+                package='random_explorer_bot',
+                executable='exploration_controller',
+                name='exploration_controller',
+                parameters=[
+                    exploration_params_file,
+                    {'use_sim_time': use_sim_time}
+                ],
+                output='screen'
+            )
+        ]
     )
     
     return LaunchDescription([
         declare_use_sim_time_cmd,
         declare_autostart_cmd,
-        slam_toolbox_cmd,  # Start SLAM first
+        slam_toolbox_cmd,
         nav2_bringup_cmd,
         rviz_cmd,
         exploration_controller_cmd

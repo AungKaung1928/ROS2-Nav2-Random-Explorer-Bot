@@ -1,8 +1,28 @@
+# Exploration Controller Parameters
+# TurtleBot3 World is approximately 10x10 meters centered at origin
 exploration_controller:
   ros__parameters:
+    # Exploration area bounds (covers entire TurtleBot3 world)
     exploration_bounds:
-      min_x: -5.0  # Even larger area
-      max_x: 5.0
-      min_y: -5.0
-      max_y: 5.0
+      min_x: -4.5
+      max_x: 4.5
+      min_y: -4.5
+      max_y: 4.5
+    
+    # How often to check for new goals (Hz)
+    # Higher = more responsive, Lower = more stable
     exploration_frequency: 0.5
+    
+    # Goal timeout in seconds - cancel and try new goal if taking too long
+    goal_timeout_sec: 30.0
+    
+    # Minimum distance from current position for new goals (meters)
+    # Prevents generating goals too close
+    min_goal_distance: 1.5
+    
+    # Maximum distance for new goals (meters)
+    # Set to 0 for no limit, or positive value to limit how far goals can be
+    max_goal_distance: 0.0
+    
+    # Number of attempts to find a valid goal before giving up
+    max_goal_attempts: 200
