@@ -185,6 +185,7 @@ ros2 topic echo /exploration_goal_marker
 
 - [Nav2 Documentation](https://docs.nav2.org/)
 - [SLAM Toolbox](https://github.com/stevemacenski/slam_toolbox)
-- [TurtleBot3 Manual]([https://emanual.robotis.com/docs/en/platform/turtlebot3/](https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/))
+- [TurtleBot3 Manual](https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/)
 - [ROS2 Humble Docs](https://docs.ros.org/en/humble/)
+
 
