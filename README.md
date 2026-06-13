@@ -1,191 +1,152 @@
-# Random Explorer Bot - Autonomous Navigation with Nav2
+# random_explorer_bot
 
-[![ROS2](https://img.shields.io/badge/ROS2-Humble-blue?style=for-the-badge&logo=ros&logoColor=white)](https://docs.ros.org/en/humble/)
-[![C++](https://img.shields.io/badge/C++-17-green?style=for-the-badge&logo=cplusplus&logoColor=white)](https://isocpp.org/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-yellow?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
-[![Gazebo](https://img.shields.io/badge/Gazebo-Classic-orange?style=for-the-badge&logo=gazebo)](https://gazebosim.org/)
-[![Nav2](https://img.shields.io/badge/Nav2-Navigation-violet?style=for-the-badge)](https://docs.nav2.org/)
+Autonomous exploration of an unknown indoor world: a TurtleBot3 Burger drives itself to randomly sampled, collision-checked goals while SLAM builds a map of everything it sees — fully simulated in **Gazebo Harmonic**, no hardware required.
 
-## Overview
+---
 
-An Autonomous Exploration System built with ROS2 and Nav2 that enables robots to continuously explore unknown environments. The system generates random navigation goals within specified boundaries, validates them against the current SLAM map, and handles unreachable goals gracefully with automatic timeout and retry mechanisms.
+## 1. What it does
 
-### Key Features
+A single C++ node (`exploration_controller`) picks random reachable goals inside the
+known map, sends them to Nav2 as `NavigateToPose` actions, and lets `slam_toolbox`
+map the world as the robot drives. Goals that occupy or sit too close to an obstacle
+are rejected before they are ever sent; goals Nav2 cannot reach within a timeout are
+cancelled and replaced. The robot explores indefinitely with no human input.
 
-- **Dynamic Mapping**: Real-time map generation using SLAM Toolbox
-- **Random Goal Generation**: Smart goal selection with map validation and distance constraints
-- **Continuous Exploration**: Autonomous navigation without human intervention
-- **Goal Timeout Handling**: Automatic cancellation of unreachable goals
-- **Intelligent Obstacle Avoidance**: Dynamic collision prevention using Nav2
-- **Visual Feedback**: Colorful goal markers and progress tracking in RViz
+## 2. Node graph
 
-## System Architecture
-```mermaid
-graph TD
-    A[Exploration Controller] --> B[Random Goal Generator]
-    A --> C[Map Validator]
-    A --> D[Nav2 Action Client]
-    D --> E[Nav2 Stack]
-    E --> F[Controller Server]
-    E --> G[Planner Server]
-    E --> H[Behavior Server]
-    I[SLAM Toolbox] --> J[Dynamic Map]
-    J --> C
-    C --> B
+```
+                Gazebo Harmonic (gz-sim8)
+                ┌────────────────────────┐
+                │  explore_world.sdf      │
+                │  TB3 Burger: diff-drive │
+                │  + gpu_lidar + imu      │
+                └───────────┬─────────────┘
+                            │ gz-transport
+                   ┌────────┴──────────┐
+                   │   ros_gz_bridge   │  /clock /scan /odom /tf /imu  (GZ→ROS)
+                   │ (parameter_bridge)│  /cmd_vel                     (ROS→GZ)
+                   └────────┬──────────┘
+            /scan /tf  ┌────┴────────────────────────────┐  /tf (map→odom)
+                  ┌────▼───────┐                    ┌─────▼──────────────────┐
+                  │ slam_toolbox│  /map ─────────►  │ exploration_controller │
+                  │   (sync)    │                   │  (this package, C++)   │
+                  └────┬────────┘                   │  • RandomGoalGenerator │
+            /map(costmap)│                          │  • MapValidator        │
+                  ┌─────▼───────────────────────┐   │  • tf2 map→base_link   │
+                  │            Nav2              │   └───────┬────────────────┘
+                  │ planner → controller →       │  navigate_to_pose (action)
+                  │ velocity_smoother → /cmd_vel │◄─────────┘
+                  │ (lifecycle: autostart)       │
+                  └──────────────────────────────┘
+                         │ /exploration_goal_marker → RViz2
 ```
 
-### Component Overview
+tf chain: `map`→`odom` (slam_toolbox) → `base_footprint` (gz diff-drive) →
+`base_link`/`base_scan` (robot_state_publisher).
+cmd_vel chain: `controller_server` → `/cmd_vel_nav` → `velocity_smoother` →
+`/cmd_vel` → `ros_gz_bridge` → DiffDrive plugin.
 
-| Component | Responsibility |
-|-----------|---------------|
-| **Exploration Controller** | Main orchestration, state management, goal timeout handling |
-| **Random Goal Generator** | Boundary-aware random points with min/max distance constraints |
-| **Map Validator** | Collision-free goal validation with circular clearance check |
-| **Nav2 Stack** | Path planning, obstacle avoidance |
-| **SLAM Toolbox** | Real-time environment mapping |
+## 3. Key decisions
 
-## Prerequisites
+- **Gazebo Harmonic (gz-sim8), not Classic.** Gazebo Classic is EOL and is not installed
+  on Humble here (`turtlebot3_gazebo` is absent). The entire sim — world, diff-drive,
+  gpu_lidar, imu, and the ros_gz bridge — is **self-contained in this package**
+  (`worlds/`, `models/`, `description/`, `config/gz_bridge.yaml`), so it runs from a
+  clean checkout with no external sim package.
+- **Pose from the SLAM tf tree, not `/amcl_pose`.** The map is unknown at start, so
+  localization comes from SLAM's `map`→`odom` tf — there is no AMCL. Pose is read via a
+  `tf2` `map`→`base_link` lookup. An earlier version subscribed to `/amcl_pose`, which
+  never publishes under SLAM, so every goal distance was measured from `(0,0)`.
+- **Goal logic in C++, not Python.** Goal sampling + occupancy-grid clearance checks run
+  in the planning hot path; C++ keeps `MapValidator`'s per-cell circular clearance scan
+  cheap enough to run every cycle without stalling callbacks.
+- **`slam_toolbox` + Nav2 `navigation_launch.py` (no AMCL/map_server).** SLAM provides
+  both the map and the `map`→`odom` transform.
+- **Pre-send validity filtering.** Goals are clearance-checked (0.35 m circular) against
+  the live occupancy grid *before* dispatch, so Nav2 is never handed goals inside the
+  obstacles — cutting wasted planning cycles.
+- **Timed staged bringup.** Sim starts first; the nav stack waits 8 s and the explorer a
+  further 10 s, so `/scan`, `/odom`, and tf are flowing before Nav2 initializes (avoids
+  the lifecycle-not-active and tf-startup-race footguns).
 
-### System Requirements
+## 4. Dependencies
 
-- **OS**: Ubuntu 22.04 LTS
-- **ROS2**: Humble Hawksbill
-- **RAM**: 4GB minimum (8GB recommended)
+**Build:** `ament_cmake`, C++17.
+**ROS 2 Humble packages:** `rclcpp`, `rclcpp_action`, `nav2_msgs`, `geometry_msgs`,
+`nav_msgs`, `sensor_msgs`, `action_msgs`, `tf2`, `tf2_ros`, `tf2_geometry_msgs`,
+`visualization_msgs`.
+**Runtime stack:** `nav2_bringup`, `slam_toolbox`, `robot_state_publisher`, `xacro`,
+`ros_gz_sim`, `ros_gz_bridge`, `turtlebot3_description`, `rviz2`.
+**Simulator:** Gazebo Harmonic (gz-sim8).
 
-### Required Dependencies
-```bash
-sudo apt update
-sudo apt install -y \
-  ros-humble-desktop-full \
-  ros-humble-navigation2 \
-  ros-humble-nav2-bringup \
-  ros-humble-slam-toolbox \
-  ros-humble-turtlebot3* \
-  ros-humble-gazebo-ros-pkgs \
-  python3-colcon-common-extensions
-```
+## 5. Build & launch
 
-## Quick Start
-
-### Environment Setup
-```bash
-echo "export TURTLEBOT3_MODEL=burger" >> ~/.bashrc
-source ~/.bashrc
-```
-
-### Build
-```bash
-cd ~/nav2_explorer_ws
-colcon build --packages-select random_explorer_bot
-source install/setup.bash
-```
-
-### Launch
-
-**Terminal 1 - Gazebo Simulation:**
-```bash
-export TURTLEBOT3_MODEL=burger
-ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
-```
-
-**Terminal 2 - Navigation & Exploration:**
 ```bash
 cd ~/nav2_explorer_ws
+colcon build --packages-select random_explorer_bot --symlink-install
 source install/setup.bash
-ros2 launch random_explorer_bot explorer_nav.launch.py
+
+# One-shot demo: Gazebo Harmonic + bridge + SLAM + Nav2 + RViz + explorer
+ros2 launch random_explorer_bot explore_world.launch.py
 ```
 
-## Project Structure
-```
-random_explorer_bot/
-├── config/
-│   ├── nav2_params.yaml              # Navigation2 configuration
-│   ├── exploration_params.yaml       # Exploration boundaries & timeouts
-│   └── rviz_config.rviz             # Visualization settings
-├── include/random_explorer_bot/
-│   ├── random_goal_generator.hpp     # Goal generation logic
-│   ├── exploration_controller.hpp    # Main controller
-│   └── map_validator.hpp            # Map validation utilities
-├── launch/
-│   └── explorer_nav.launch.py        # Main launch file
-├── src/
-│   ├── exploration_controller.cpp    # Controller implementation
-│   └── main.cpp                      # Node entry point
-├── CMakeLists.txt
-├── package.xml
-└── README.md
-```
+Bring up only the simulator + ros_gz bridge (sensors, no nav stack):
 
-## Configuration
-
-### Exploration Parameters (`config/exploration_params.yaml`)
-```yaml
-exploration_controller:
-  ros__parameters:
-    exploration_bounds:
-      min_x: -4.5
-      max_x: 4.5
-      min_y: -4.5
-      max_y: 4.5
-    exploration_frequency: 0.5    # Hz
-    goal_timeout_sec: 30.0        # Cancel unreachable goals after 30s
-    min_goal_distance: 1.5        # Minimum distance from robot
-    max_goal_attempts: 200
-```
-
-### Key Nav2 Parameters (`config/nav2_params.yaml`)
-```yaml
-bt_navigator:
-  ros__parameters:
-    default_server_timeout: 10    # Faster timeout for unreachable goals
-
-planner_server:
-  ros__parameters:
-    GridBased:
-      tolerance: 0.3              # Smaller tolerance = fails faster
-
-controller_server:
-  ros__parameters:
-    max_vel_x: 0.26
-    max_vel_theta: 1.0
-    xy_goal_tolerance: 0.3
-    yaw_goal_tolerance: 0.3
-```
-
-## System Behavior
-
-1. **Initialize**: Wait for map and Nav2 to be ready
-2. **Generate Goal**: Create random valid goal within boundaries (min 1.5m from robot)
-3. **Navigate**: Move to goal while avoiding obstacles
-4. **Handle Timeout**: If goal unreachable for 30s, cancel and generate new goal
-5. **Repeat**: Continue exploring indefinitely
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| **"Failed to generate valid goal"** | Increase exploration boundaries |
-| **Robot not moving** | Wait 15-20 seconds for SLAM initialization |
-| **"worldToMap failed" errors** | Normal - goal is outside mapped area, will auto-retry |
-| **Robot stuck on goal** | Will timeout after 30s and try new goal |
-
-### Debug Commands
 ```bash
-# Check map
-ros2 topic echo /map --once
-
-# Verify Nav2
-ros2 action list | grep navigate_to_pose
-
-# Monitor goals
-ros2 topic echo /exploration_goal_marker
+ros2 launch random_explorer_bot turtlebot3_gz.launch.py
+# then: ros2 topic hz /scan   # ~5 Hz   ros2 topic hz /odom   # ~30 Hz
 ```
 
-## Resources
+> **Operational footgun:** always `pkill -9 -f "gz sim"` before relaunching. A leftover
+> headless `gz sim` server shares the global gz-transport bus and silently corrupts
+> `/clock`, `/odom`, and `/tf`. After launch, sanity-check: exactly one `gz sim server`,
+> `/clock` ≈ wall time, odom near the spawn at `(-2.0, -0.5)`.
 
-- [Nav2 Documentation](https://docs.nav2.org/)
-- [SLAM Toolbox](https://github.com/stevemacenski/slam_toolbox)
-- [TurtleBot3 Manual](https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/)
-- [ROS2 Humble Docs](https://docs.ros.org/en/humble/)
+Save the live SLAM map at any time:
 
+```bash
+ros2 run nav2_map_server map_saver_cli -f explored_map
+```
 
+## 6. Demo
+
+Best capture is RViz2 (occupancy grid growing + colored goal-arrow markers) over a live
+session. Record with the windows foregrounded, then commit `docs/demo.gif`:
+
+```bash
+ffmpeg -f x11grab -framerate 15 -video_size <W>x<H> -i :0.0+<X>,<Y> -t 12 /tmp/demo.mp4
+ffmpeg -i /tmp/demo.mp4 -vf "fps=10,scale=600:-1:flags=lanczos,palettegen" /tmp/p.png
+ffmpeg -i /tmp/demo.mp4 -i /tmp/p.png -lavfi "fps=10,scale=600:-1[x];[x][1:v]paletteuse" docs/demo.gif
+```
+
+## 7. Verified results
+
+Migration smoke-test on this machine (ROS 2 Humble, Gazebo Sim 8.12.0), from
+`turtlebot3_gz.launch.py`:
+
+| Check | Result |
+|---|---|
+| `gz sim` loads `explore_world.sdf` | ✅ |
+| `/scan` (gpu_lidar → bridge) | ✅ ~4.8 Hz |
+| `/odom` (diff-drive → bridge) | ✅ ~28.7 Hz |
+| `/clock` (sim time → bridge) | ✅ advancing |
+| tf `odom`→`base_footprint` (diff-drive) | ✅ |
+| tf `base_link`→`base_scan` (robot_state_publisher) | ✅ |
+| `colcon build` | ✅ clean |
+
+Exploration-run metrics (goals dispatched/reached, success rate, coverage) are
+reproducible from a full `explore_world.launch.py` session plus `map_saver_cli`; they
+are intentionally not pre-filled here — record them from your own run.
+
+## 8. Planned improvements
+
+- **Frontier-based exploration.** `RandomGoalGenerator::generateFrontierBiasedGoal()`
+  already exists but is unused — the controller calls pure-random `generateGoal()`. Wire
+  it in (drive toward known/unknown map boundaries) to raise success rate and cut aborts
+  in obstacle-dense regions.
+- **Coverage-aware termination.** Stop or report "done" when the explored free-cell area
+  stops growing, instead of exploring forever.
+- **Replace the wall-clock goal timeout** with a Nav2-progress check (cancel on *stalled*
+  progress, not just elapsed time) so slow-but-valid goals aren't dropped.
+- **Launch-time cleanup of stray gz servers** so the operational footgun in §5 can't bite
+  on relaunch.

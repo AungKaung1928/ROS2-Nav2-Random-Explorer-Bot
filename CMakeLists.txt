@@ -1,16 +1,15 @@
 cmake_minimum_required(VERSION 3.8)
 project(random_explorer_bot)
 
-# Enable compiler warnings for GCC/Clang
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# C++17 required for std::optional and other modern features
+# C++17 required for std::optional
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Find ROS2 dependencies
+# Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
@@ -22,17 +21,18 @@ find_package(action_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
 
-# Add include directory for header files
+# Include directories
 include_directories(include)
 
-# Build exploration_controller executable from sources
+# Build executable
 add_executable(exploration_controller
   src/exploration_controller.cpp
   src/main.cpp
 )
 
-# Link all required ROS2 dependencies to executable
+# Link dependencies
 ament_target_dependencies(exploration_controller
   rclcpp
   rclcpp_action
@@ -44,33 +44,41 @@ ament_target_dependencies(exploration_controller
   tf2_geometry_msgs
   visualization_msgs
   tf2
+  tf2_ros
 )
 
-# Install executable to lib/<package_name> (ROS2 convention)
+# Install executable
 install(TARGETS
   exploration_controller
   DESTINATION lib/${PROJECT_NAME}
 )
 
-# Install launch files to share/<package_name>/launch
+# Install launch files
 install(DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME}/
 )
 
-# Install config files (YAML params) to share/<package_name>/config
+# Install config files
 install(DIRECTORY
   config
   DESTINATION share/${PROJECT_NAME}/
 )
 
-# Install headers to include/ for other packages to use
+# Install simulation assets (Gazebo Harmonic world + robot description + models)
+install(DIRECTORY
+  worlds
+  description
+  models
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install include directory
 install(DIRECTORY
   include/
   DESTINATION include/
 )
 
-# Run linting tests if BUILD_TESTING is enabled
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()

@@ -46,7 +46,7 @@ bt_navigator:
     robot_base_frame: base_link
     odom_topic: /odom
     bt_loop_duration: 10
-    default_server_timeout: 10
+    default_server_timeout: 20
     # Enable recovery behaviors for stuck situations
     enable_groot_monitoring: false
     plugin_lib_names:
@@ -245,7 +245,7 @@ planner_server:
     planner_plugins: ["GridBased"]
     GridBased:
       plugin: "nav2_navfn_planner/NavfnPlanner"
-      tolerance: 0.3
+      tolerance: 0.5
       use_astar: false
       allow_unknown: true
 

@@ -19,11 +19,10 @@ ExplorationController::ExplorationController()
     map_sub_ = this->create_subscription<nav_msgs::msg::OccupancyGrid>(
         "/map", rclcpp::QoS(10).transient_local(),
         std::bind(&ExplorationController::mapCallback, this, std::placeholders::_1));
-    
-    amcl_sub_ = this->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
-        "/amcl_pose", 10,
-        std::bind(&ExplorationController::amclCallback, this, std::placeholders::_1));
-    
+
+    tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
+    tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+
     goal_marker_pub_ = this->create_publisher<visualization_msgs::msg::Marker>(
         "/exploration_goal_marker", 10);
     
@@ -71,10 +70,20 @@ void ExplorationController::mapCallback(const nav_msgs::msg::OccupancyGrid::Shar
                      msg->info.width, msg->info.height, msg->info.resolution);
 }
 
-void ExplorationController::amclCallback(
-    const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg) {
-    current_pose_ = msg->pose.pose;
-    have_pose_ = true;
+bool ExplorationController::updatePoseFromTf() {
+    try {
+        auto tf = tf_buffer_->lookupTransform("map", "base_link", tf2::TimePointZero);
+        current_pose_.position.x = tf.transform.translation.x;
+        current_pose_.position.y = tf.transform.translation.y;
+        current_pose_.position.z = tf.transform.translation.z;
+        current_pose_.orientation = tf.transform.rotation;
+        have_pose_ = true;
+        return true;
+    } catch (const tf2::TransformException& ex) {
+        RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                             "Waiting for map->base_link tf: %s", ex.what());
+        return false;
+    }
 }
 
 void ExplorationController::explorationLoop() {
@@ -101,14 +110,11 @@ void ExplorationController::explorationLoop() {
         RCLCPP_INFO(this->get_logger(), "Nav2 is ready!");
     }
     
-    // Use origin if we don't have AMCL pose yet
-    if (!have_pose_) {
-        RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
-                             "Waiting for robot pose...");
-        current_pose_.position.x = 0.0;
-        current_pose_.position.y = 0.0;
+    // Need the robot's real pose (from the SLAM tf tree) to size goal distances
+    if (!updatePoseFromTf()) {
+        return;
     }
-    
+
     // Generate goal with distance constraints
     auto goal_opt = goal_generator_->generateGoal(
         *map_validator_,
