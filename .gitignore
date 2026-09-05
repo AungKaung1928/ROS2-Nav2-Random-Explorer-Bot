@@ -1,0 +1,17 @@
+# ROS2 / colcon build artifacts
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Editor / OS
+.vscode/
+*.swp
+.DS_Store
+
+# Local Claude config (machine-specific)
+.claude/
