@@ -1,4 +1,4 @@
-# CONTEXT.md — ROS2-Nav2-Random-Explorer-Bot (canonical; ros2-explorer-bot archived 2026-09-05)
+# CONTEXT.md — ROS2-Nav2-Random-Explorer-Bot (canonical; ros2-explorer-bot deleted 2026-09-05)
 
 ## Current
 WORKING END-TO-END. Robot autonomously explores: random goals generated, Nav2
@@ -11,7 +11,7 @@ corrupts /clock /odom /tf. Launch has no auto-cleanup of leftover servers.
 ## Solved
 - 2026-09-05 CONSOLIDATION: this repo (3 stars, descriptive name) kept as canonical; content of the
   duplicate ros2-explorer-bot (measured results, docs/ map, LICENSE, .gitignore, blocking
-  rclcpp::spin main) synced in byte-for-byte; ros2-explorer-bot archived with a pointer README.
+  rclcpp::spin main) synced in byte-for-byte; ros2-explorer-bot deleted from GitHub.
 - PORTFOLIO PASS: README.md written (8-section standard) + docs/explored_map.png|pgm|yaml
   saved live. Measured run: 66 goals, 38 reached / 26 aborted = 59% success, mean 12.2s
   to goal, 2.11m mean hop, full arena mapped @0.05m/cell. Honest weakness logged: random
