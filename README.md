@@ -105,6 +105,8 @@ Save the live SLAM map at any time:
 ros2 run nav2_map_server map_saver_cli -f docs/explored_map
 ```
 
+Test without Gazebo, SLAM or Nav2: `cd src/random_explorer_bot && launch_test test/test_launch_goals.py` (after `source install/setup.bash`) gives the installed node a known map with one occupied block, a static `map -> base_link` and a stand-in `navigate_to_pose` server, and checks every goal stays inside `exploration_bounds`, at least `min_goal_distance` from the robot and clear of the block. CI runs it in `ros:humble` on every push.
+
 ## 6. Demo
 
 Hero artifact is the SLAM occupancy grid above (`docs/explored_map.png`), saved live
