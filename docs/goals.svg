@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 524" font-family="Helvetica, Arial, sans-serif" font-size="12">
+<rect width="480" height="524" fill="#ffffff"/>
+<line x1="55.4" y1="0" x2="55.4" y2="480" stroke="#eef1f3"/><line x1="0" y1="424.6" x2="480" y2="424.6" stroke="#eef1f3"/>
+<line x1="147.7" y1="0" x2="147.7" y2="480" stroke="#eef1f3"/><line x1="0" y1="332.3" x2="480" y2="332.3" stroke="#eef1f3"/>
+<line x1="240.0" y1="0" x2="240.0" y2="480" stroke="#eef1f3"/><line x1="0" y1="240.0" x2="480" y2="240.0" stroke="#eef1f3"/>
+<line x1="332.3" y1="0" x2="332.3" y2="480" stroke="#eef1f3"/><line x1="0" y1="147.7" x2="480" y2="147.7" stroke="#eef1f3"/>
+<line x1="424.6" y1="0" x2="424.6" y2="480" stroke="#eef1f3"/><line x1="0" y1="55.4" x2="480" y2="55.4" stroke="#eef1f3"/>
+<rect x="55.4" y="55.4" width="369.2" height="369.2" fill="none" stroke="#005f73" stroke-dasharray="6 4"/>
+<text x="59.4" y="49.4" fill="#005f73">exploration_bounds ±2 m</text>
+<rect x="281.5" y="170.8" width="138.5" height="138.5" rx="32.3" fill="#f6e7e2"/>
+<rect x="313.8" y="203.1" width="73.8" height="73.8" fill="#a2624a"/>
+<text x="350.8" y="164.8" text-anchor="middle" fill="#7a4632">occupied + 0.35 m clearance</text>
+<circle cx="240.0" cy="240.0" r="92.3" fill="none" stroke="#9aa5b1" stroke-dasharray="3 3"/>
+<circle cx="240.0" cy="240.0" r="5" fill="#10161e"/>
+<text x="232.0" y="258.0" text-anchor="end" fill="#3f4d58">robot</text>
+<circle cx="114.0" cy="148.4" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="323.7" cy="395.4" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="304.3" cy="320.2" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="371.4" cy="343.4" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="56.7" cy="212.0" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="128.7" cy="212.7" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="166.4" cy="387.0" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="333.8" cy="397.6" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="244.6" cy="398.4" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="92.4" cy="358.9" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="66.8" cy="217.3" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="387.7" cy="356.1" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="196.0" cy="357.3" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="174.5" cy="170.3" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="79.7" cy="375.4" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="81.4" cy="65.1" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="145.0" cy="96.2" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="398.2" cy="419.1" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="225.7" cy="89.3" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<circle cx="90.8" cy="145.4" r="4.5" fill="#005f73" fill-opacity="0.85"/>
+<text x="8" y="498" fill="#3f4d58">20 goals sent by the node in the CI launch test (known 10 x 10 m map,</text><text x="8" y="514" fill="#3f4d58">stand-in Nav2). Dashed circle: min_goal_distance 1 m. Metres, map frame.</text>
+</svg>

@@ -34,7 +34,8 @@ el.append(f'<text x="{X(-bound) + 4:.1f}" y="{Y(bound) - 6:.1f}" fill="#005f73">
 el.append(f'<rect x="{X(bx0) - clr * s:.1f}" y="{Y(by1) - clr * s:.1f}" width="{(bx1 - bx0 + 2 * clr) * s:.1f}" '
           f'height="{(by1 - by0 + 2 * clr) * s:.1f}" rx="{clr * s:.1f}" fill="#f6e7e2"/>')
 el.append(f'<rect x="{X(bx0):.1f}" y="{Y(by1):.1f}" width="{(bx1 - bx0) * s:.1f}" height="{(by1 - by0) * s:.1f}" fill="#a2624a"/>')
-el.append(f'<text x="{X(bx1) + clr * s + 4:.1f}" y="{Y(by0) + 4:.1f}" fill="#7a4632">occupied + {clr} m clearance</text>')
+el.append(f'<text x="{X((bx0 + bx1) / 2):.1f}" y="{Y(by1) - clr * s - 6:.1f}" text-anchor="middle" '
+          f'fill="#7a4632">occupied + {clr} m clearance</text>')
 el.append(f'<circle cx="{X(0):.1f}" cy="{Y(0):.1f}" r="{min_d * s:.1f}" fill="none" stroke="#9aa5b1" stroke-dasharray="3 3"/>')
 el.append(f'<circle cx="{X(0):.1f}" cy="{Y(0):.1f}" r="5" fill="#10161e"/>')
 el.append(f'<text x="{X(0) - 8:.1f}" y="{Y(0) + 18:.1f}" text-anchor="end" fill="#3f4d58">robot</text>')
