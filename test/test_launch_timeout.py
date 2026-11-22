@@ -90,10 +90,14 @@ class TestGoals(unittest.TestCase):
         def execute(goal_handle):
             p = goal_handle.request.pose.pose.position
             goals.append((round(p.x, 3), round(p.y, 3)))
-            while not goal_handle.is_cancel_requested:
+            deadline = time.monotonic() + 10.0  # never block teardown
+            while not goal_handle.is_cancel_requested and time.monotonic() < deadline:
                 time.sleep(0.05)
-            goal_handle.canceled()
-            canceled.append(goals[-1])
+            if goal_handle.is_cancel_requested:
+                goal_handle.canceled()
+                canceled.append(goals[-1])
+            else:
+                goal_handle.abort()
             return NavigateToPose.Result()
 
         server = ActionServer(fake, NavigateToPose, 'navigate_to_pose', execute,
