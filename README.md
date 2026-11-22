@@ -111,7 +111,7 @@ Test without Gazebo, SLAM or Nav2: `cd src/random_explorer_bot && launch_test te
 
 The 20 goals of CI run e886c72 (CSV artifact plotted by `scripts/plot_goals.py`).
 
-`test/test_launch_abort.py` has the stand-in server abort every goal: the node keeps exploring with 4 different new goals (no stall, no resend).
+`test/test_launch_abort.py` has the stand-in server abort every goal: the node keeps exploring with 4 different new goals (no stall, no resend). `test/test_launch_timeout.py` overrides `goal_timeout_sec` to 2 s against a server that never finishes: the node cancels each goal and picks a new one.
 
 ## 6. Demo
 
