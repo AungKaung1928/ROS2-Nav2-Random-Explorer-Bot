@@ -33,6 +33,7 @@ jobs:
           cd src/random_explorer_bot
           GOALS_CSV=$GITHUB_WORKSPACE/goals.csv launch_test test/test_launch_goals.py
           python3 scripts/plot_goals.py $GITHUB_WORKSPACE/goals.csv $GITHUB_WORKSPACE/goals.svg
+          launch_test test/test_launch_abort.py
       - name: Upload the goals
         uses: actions/upload-artifact@v4
         with:
