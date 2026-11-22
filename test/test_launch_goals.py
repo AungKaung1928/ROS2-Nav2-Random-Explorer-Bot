@@ -94,13 +94,18 @@ class TestGoals(unittest.TestCase):
         executor.add_node(fake)
         try:
             start = time.monotonic()
-            while len(goals) < 6 and time.monotonic() - start < 60.0:
+            while len(goals) < 20 and time.monotonic() - start < 90.0:
                 executor.spin_once(timeout_sec=0.1)
         finally:
             server.destroy()
             executor.shutdown()
             fake.destroy_node()
         self.assertGreaterEqual(len(goals), 6, f'goals seen: {goals}')
+        out = os.environ.get('GOALS_CSV')  # optional, for scripts/plot_goals.py
+        if out:
+            with open(out, 'w') as f:
+                f.write(f'# bound {BOUND} min_dist {MIN_DIST} block {" ".join(map(str, BLOCK))} clearance 0.35\nx,y\n')
+                f.writelines(f'{x:.4f},{y:.4f}\n' for x, y in goals)
         for x, y in goals:
             with self.subTest(goal=(round(x, 2), round(y, 2))):
                 self.assertTrue(-BOUND <= x <= BOUND and -BOUND <= y <= BOUND)
