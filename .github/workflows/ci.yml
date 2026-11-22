@@ -27,3 +27,8 @@ jobs:
         run: |
           source install/setup.bash
           ros2 pkg prefix random_explorer_bot
+      - name: Launch test (node with a known map, static tf and a stand-in Nav2 server)
+        run: |
+          source install/setup.bash
+          cd src/random_explorer_bot
+          launch_test test/test_launch_goals.py
