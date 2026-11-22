@@ -111,6 +111,8 @@ Test without Gazebo, SLAM or Nav2: `cd src/random_explorer_bot && launch_test te
 
 The 20 goals of CI run e886c72 (CSV artifact plotted by `scripts/plot_goals.py`).
 
+`test/test_launch_abort.py` has the stand-in server abort every goal: the node keeps exploring with 4 different new goals (no stall, no resend).
+
 ## 6. Demo
 
 Hero artifact is the SLAM occupancy grid above (`docs/explored_map.png`), saved live
