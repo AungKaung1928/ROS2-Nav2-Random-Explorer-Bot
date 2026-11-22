@@ -81,12 +81,14 @@ cmd_vel chain: `controller_server` → `/cmd_vel_nav` → `velocity_smoother` �
 
 ## 5. Build & launch
 
+Requires Ubuntu 22.04, ROS 2 Humble, Gazebo Harmonic (`gz-harmonic`, `ros-humble-ros-gzharmonic`) and the runtime stack above.
+
 ```bash
-# Symlinked into the colcon workspace, then built:
-cd ~/ros2_ws
+mkdir -p ~/ros2_ws/src && cd ~/ros2_ws/src
+git clone <this repo URL>
+cd .. && rosdep install --from-paths src --ignore-src -y   # first time only
 colcon build --packages-select random_explorer_bot --symlink-install
 source install/setup.bash
-
 # One-shot demo: Gazebo + bridge + SLAM + Nav2 + RViz + explorer
 ros2 launch random_explorer_bot explore_world.launch.py
 ```
@@ -151,3 +153,7 @@ for the roadmap below.
 - **Launch-time cleanup of stray gz servers** so the operational footgun in §5 can't
   bite on relaunch.
 ```
+
+## License
+
+Apache-2.0, see LICENSE.
