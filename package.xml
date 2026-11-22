@@ -4,7 +4,7 @@
   <name>random_explorer_bot</name>
   <version>0.2.0</version>
   <description>Autonomous exploration using Nav2 with random goal generation</description>
-  <maintainer email="allkg@example.com">allkg</maintainer>
+  <maintainer email="dev@example.com">Developer</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

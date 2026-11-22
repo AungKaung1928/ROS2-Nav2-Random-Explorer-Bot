@@ -13,5 +13,3 @@ __pycache__/
 *.swp
 .DS_Store
 
-# Local Claude config (machine-specific)
-.claude/
