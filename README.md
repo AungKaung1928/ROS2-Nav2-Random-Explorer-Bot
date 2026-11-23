@@ -85,7 +85,7 @@ Requires Ubuntu 22.04, ROS 2 Humble, Gazebo Harmonic (`gz-harmonic`, `ros-humble
 
 ```bash
 mkdir -p ~/ros2_ws/src && cd ~/ros2_ws/src
-git clone <this repo URL>
+git clone https://github.com/AungKaung1928/ROS2-Nav2-Random-Explorer-Bot.git
 cd .. && rosdep install --from-paths src --ignore-src -y   # first time only
 colcon build --packages-select random_explorer_bot --symlink-install
 source install/setup.bash
